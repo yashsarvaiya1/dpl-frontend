@@ -15,9 +15,10 @@ interface Props { id: number }
 export default function MatchEditPage({ id }: Props) {
   const router = useRouter()
   const { setHeaderTitle, setShowBack } = useUiStore()
-  const { data: match, isLoading } = useMatch(id)
-  const { mutateAsync, isPending } = useUpdateMatch()
-  const [error, setError] = useState<string | null>(null)
+  const { data: match, isLoading }      = useMatch(id)
+  const { mutateAsync, isPending }      = useUpdateMatch()
+  // ← string | undefined, NOT null — fixes TS error
+  const [error, setError] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     setHeaderTitle('Edit Match')
@@ -25,38 +26,50 @@ export default function MatchEditPage({ id }: Props) {
     return () => setShowBack(false)
   }, [setHeaderTitle, setShowBack])
 
-  if (isLoading) return <PageWrapper><Skeleton className="h-12 w-full" /></PageWrapper>
+  if (isLoading) return (
+    <PageWrapper>
+      <Skeleton className="h-12 w-full rounded-xl" />
+    </PageWrapper>
+  )
+
+  if (!match) return (
+    <PageWrapper>
+      <p className="text-center text-sm text-destructive py-12">Match not found.</p>
+    </PageWrapper>
+  )
 
   return (
     <PageWrapper>
       <MatchForm
         defaultValues={{
-          team_1: String(match?.team_1),
-          team_2: String(match?.team_2),
-          date: match?.date,
-          start_time: match?.start_time,
-          end_time: match?.end_time,
+          team_1:     String(match.team_1),
+          team_2:     String(match.team_2),
+          date:       match.date ?? '',           // ← null → '' fixes TS
+          start_time: match.start_time ?? '',     // ← null → ''
+          end_time:   match.end_time ?? '',       // ← null → ''
         }}
         onSubmit={async (data) => {
-          setError(null)
+          setError(undefined)
           try {
             await mutateAsync({
               id,
               data: {
-                team_1: Number(data.team_1),
-                team_2: Number(data.team_2),
-                date: data.date,
+                team_1:     Number(data.team_1),
+                team_2:     Number(data.team_2),
+                date:       data.date,
                 start_time: data.start_time,
-                end_time: data.end_time,
-              }
+                end_time:   data.end_time,
+              },
             })
             router.push(`/matches/${id}`)
-          } catch (err: any) {
-            const resData = err?.response?.data
-            if (resData?.date) setError(resData.date[0] || resData.date)
-            else if (resData?.non_field_errors) setError(resData.non_field_errors[0])
-            else if (resData?.detail) setError(resData.detail)
-            else setError('Failed to update match.')
+          } catch (err: unknown) {
+            const resData = (err as any)?.response?.data
+            setError(
+              resData?.date?.[0]
+              ?? resData?.non_field_errors?.[0]
+              ?? resData?.detail
+              ?? 'Failed to update match.'
+            )
           }
         }}
         isLoading={isPending}

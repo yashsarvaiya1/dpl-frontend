@@ -20,17 +20,19 @@ export default function TeamNewPage() {
     return () => setShowBack(false)
   }, [setHeaderTitle, setShowBack])
 
-  const handleSubmit = async (data: { name: string }) => {
-    await mutateAsync(data)
-    router.push('/teams')
-  }
+  const apiError     = (error as any)?.response?.data
+  const errorMessage = apiError?.name?.[0] ?? apiError?.detail
+    ?? (error ? 'Failed to create team.' : undefined)
 
   return (
     <PageWrapper>
       <TeamForm
-        onSubmit={handleSubmit}
+        onSubmit={async (data) => {
+          await mutateAsync(data)
+          router.push('/teams')
+        }}
         isLoading={isPending}
-        error={error ? 'Failed to create team.' : null}
+        error={errorMessage}
         submitLabel="Create Team"
       />
     </PageWrapper>
