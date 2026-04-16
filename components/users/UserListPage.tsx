@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUIStore } from "@/stores/uiStore";
+import { useUiStore } from "@/stores/uiStore";
 import { useUsers } from "@/hooks/useUser";
 import PageWrapper from "@/components/shared/PageWrapper";
 import { Input } from "@/components/ui/input";
@@ -79,7 +79,7 @@ function UserCard({ user, onClick }: { user: User; onClick: () => void }) {
 
 export default function UserListPage() {
   const router = useRouter();
-  const setHeaderTitle = useUIStore((s) => s.setHeaderTitle);
+  const setHeaderTitle = useUiStore((s) => s.setHeaderTitle);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 

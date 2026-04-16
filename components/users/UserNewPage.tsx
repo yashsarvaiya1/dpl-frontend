@@ -4,16 +4,16 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useUIStore } from "@/stores/uiStore";
+import { useUiStore } from "@/stores/uiStore";
 import { useCreateUser } from "@/hooks/useUser";
 import PageWrapper from "@/components/shared/PageWrapper";
 import UserForm from "./UserForm";
 
 export default function UserNewPage() {
   const router = useRouter();
-  const setHeaderTitle = useUIStore((s) => s.setHeaderTitle);
+  const setHeaderTitle = useUiStore((s) => s.setHeaderTitle);
   const { mutate: createUser, isPending, error } = useCreateUser();
-  const setShowBack = useUIStore((s) => s.setShowBack);
+  const setShowBack = useUiStore((s) => s.setShowBack);
 
   useEffect(() => {
     setHeaderTitle("New User");

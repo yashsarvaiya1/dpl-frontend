@@ -21,7 +21,7 @@ interface UIState {
   setTheme: (theme: "light" | "dark") => void;
 }
 
-export const useUIStore = create<UIState>()((set) => ({
+export const useUiStore = create<UIState>()((set) => ({
   headerTitle: "Dashboard",
   setHeaderTitle: (title) => set({ headerTitle: title }),
 
