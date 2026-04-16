@@ -3,12 +3,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { useUIStore } from "@/stores/uiStore";
+import { useUiStore } from "@/stores/uiStore";
 import { useAuthStore } from "@/stores/authStore";
 import PageWrapper from "@/components/shared/PageWrapper";
 
 export default function DashboardPage() {
-  const setHeaderTitle = useUIStore((s) => s.setHeaderTitle);
+  const setHeaderTitle = useUiStore((s) => s.setHeaderTitle);
   const user = useAuthStore((s) => s.user);
 
   useEffect(() => {

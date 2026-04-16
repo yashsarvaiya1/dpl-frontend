@@ -79,3 +79,34 @@ export const useActivateUser = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [USERS_KEY] }),
   });
 };
+
+export const useAddTickets = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, amount }: { id: number; amount: number }) =>
+      userService.addTickets(id, amount).then(r => r.data),
+    onSuccess: (data, { id }) => {
+      // Force update the cached user with new ticket count
+      qc.setQueryData(['users', id], (old: any) =>
+        old ? { ...old, tickets: data.tickets } : old
+      )
+      qc.invalidateQueries({ queryKey: ['users'] })
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+    },
+  })
+}
+
+export const useRemoveTickets = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, amount }: { id: number; amount: number }) =>
+      userService.removeTickets(id, amount).then(r => r.data),
+    onSuccess: (data, { id }) => {
+      qc.setQueryData(['users', id], (old: any) =>
+        old ? { ...old, tickets: data.tickets } : old
+      )
+      qc.invalidateQueries({ queryKey: ['users'] })
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+    },
+  })
+}

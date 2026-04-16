@@ -5,7 +5,9 @@ import { User, CreateUserPayload, UpdateUserPayload } from "@/models/user";
 import { PaginatedResponse } from "@/lib/types";
 
 export const userService = {
-  getAll: async (params?: Record<string, unknown>): Promise<PaginatedResponse<User>> => {
+  getAll: async (
+    params?: Record<string, unknown>,
+  ): Promise<PaginatedResponse<User>> => {
     const res = await api.get("/accounts/users/", { params });
     return res.data;
   },
@@ -40,4 +42,9 @@ export const userService = {
   activate: async (id: number): Promise<void> => {
     await api.post(`/accounts/users/${id}/activate/`);
   },
+  addTickets: (id: number, amount: number) =>
+    api.post(`/accounts/users/${id}/add-tickets/`, { amount }),
+
+  removeTickets: (id: number, amount: number) =>
+    api.post(`/accounts/users/${id}/remove-tickets/`, { amount }),
 };

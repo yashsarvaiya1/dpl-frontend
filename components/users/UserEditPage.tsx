@@ -4,7 +4,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useUIStore } from "@/stores/uiStore";
+import { useUiStore } from "@/stores/uiStore";
 import { useUser, useUpdateUser } from "@/hooks/useUser";
 import PageWrapper from "@/components/shared/PageWrapper";
 import UserForm from "./UserForm";
@@ -15,10 +15,10 @@ interface Props {
 
 export default function UserEditPage({ id }: Props) {
   const router = useRouter();
-  const setHeaderTitle = useUIStore((s) => s.setHeaderTitle);
+  const setHeaderTitle = useUiStore((s) => s.setHeaderTitle);
   const { data: user, isLoading } = useUser(id);
   const { mutate: updateUser, isPending, error } = useUpdateUser();
-  const setShowBack = useUIStore((s) => s.setShowBack);
+  const setShowBack = useUiStore((s) => s.setShowBack);
 
   useEffect(() => {
     setHeaderTitle("Edit User");
