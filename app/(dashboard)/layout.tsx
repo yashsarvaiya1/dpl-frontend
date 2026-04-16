@@ -1,4 +1,7 @@
-// dpl-frontend/app/(dashboard)/layout.tsx
+// app/(dashboard)/layout.tsx
+
+import AppShell from "@/components/shared/AppShell";
+import AuthGuard from "@/components/shared/AuthGuard";
 
 export default function DashboardLayout({
   children,
@@ -6,9 +9,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar will go here */}
-      <main className="flex-1">{children}</main>
-    </div>
+    <AuthGuard>
+      <AppShell>{children}</AppShell>
+    </AuthGuard>
   );
 }
