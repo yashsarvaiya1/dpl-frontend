@@ -3,8 +3,8 @@
 import api from '@/lib/axios'
 import {
   BMatch, BMatchPosition, BMatchStatus,
-  BRoom, BRoomDetail, OpenBoxResponse,
-  PaginatedResponse
+  BRoomDetail, OpenBoxResponse,
+  PaginatedResponse,
 } from '@/lib/types'
 
 export const bmatchService = {
@@ -29,8 +29,8 @@ export const bmatchService = {
   delete: (id: number) =>
     api.delete(`/bmatches/${id}/`),
 
-  changeStatus: (id: number, status: BMatchStatus) =>
-    api.post<BMatch>(`/bmatches/${id}/change-status/`, { status }),
+  changeStatus: (id: number, newStatus: BMatchStatus) =>
+    api.post<BMatch>(`/bmatches/${id}/change-status/`, { status: newStatus }),
 
   listPositions: (id: number) =>
     api.get<BMatchPosition[]>(`/bmatches/${id}/positions/`),

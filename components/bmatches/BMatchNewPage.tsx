@@ -20,19 +20,23 @@ export default function BMatchNewPage() {
     return () => setShowBack(false)
   }, [setHeaderTitle, setShowBack])
 
+  const apiError  = (error as any)?.response?.data
+  const errorMessage = apiError?.detail ?? apiError?.non_field_errors?.[0]
+    ?? (error ? 'Failed to create BMatch.' : undefined)
+
   return (
     <PageWrapper>
       <BMatchForm
         onSubmit={async (data) => {
           await mutateAsync({
-            match: Number(data.match),
+            match:         Number(data.match),
             ticket_amount: Number(data.ticket_amount),
-            note: data.note || undefined,
+            note:          data.note || undefined,
           })
           router.push('/bmatches')
         }}
         isLoading={isPending}
-        error={error ? 'Failed to create BMatch.' : null}
+        error={errorMessage}
         submitLabel="Create BMatch"
       />
     </PageWrapper>

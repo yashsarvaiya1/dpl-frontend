@@ -1,30 +1,30 @@
 // components/users/UserForm.tsx
 
-"use client";
+'use client'
 
-import { useForm } from "react-hook-form";
-import { useAuthStore } from "@/stores/authStore";
-import { CreateUserPayload, UpdateUserPayload } from "@/models/user";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useForm } from 'react-hook-form'
+import { useAuthStore } from '@/stores/authStore'
+import { CreateUserPayload, UpdateUserPayload } from '@/lib/types'  // ← from lib/types now
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export type UserFormValues = {
-  username: string;
-  mobile_number: string;
-  is_staff: boolean;
-  is_active: boolean;
-  tickets: number;
-};
+  username: string
+  mobile_number: string
+  is_staff: boolean
+  is_active: boolean
+  tickets: number
+}
 
 interface UserFormProps {
-  defaultValues?: Partial<UserFormValues>;
-  onSubmit: (data: CreateUserPayload | UpdateUserPayload) => void;
-  isPending: boolean;
-  error?: string;
-  isEdit?: boolean;
+  defaultValues?: Partial<UserFormValues>
+  onSubmit: (data: CreateUserPayload | UpdateUserPayload) => void
+  isPending: boolean
+  error?: string
+  isEdit?: boolean
 }
 
 export default function UserForm({
@@ -34,7 +34,8 @@ export default function UserForm({
   error,
   isEdit = false,
 }: UserFormProps) {
-  const isSuperUser = useAuthStore((s) => s.isSuperUser);
+  // ← isSuperUser is a function in the store — call it correctly
+  const isSuperUser = useAuthStore(s => s.isSuperUser())
 
   const {
     register,
@@ -44,20 +45,21 @@ export default function UserForm({
     formState: { errors },
   } = useForm<UserFormValues>({
     defaultValues: {
-      username: "",
-      mobile_number: "",
-      is_staff: false,
-      is_active: true,
-      tickets: 0,
+      username:      '',
+      mobile_number: '',
+      is_staff:      false,
+      is_active:     true,
+      tickets:       0,
       ...defaultValues,
     },
-  });
+  })
 
-  const isStaff = watch("is_staff");
-  const isActive = watch("is_active");
+  const isStaff  = watch('is_staff')
+  const isActive = watch('is_active')
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
       {/* Username */}
       <div className="space-y-2">
         <Label htmlFor="username">Full Name</Label>
@@ -65,11 +67,11 @@ export default function UserForm({
           id="username"
           placeholder="e.g. Raj Mehta"
           className="h-12"
-          {...register("username")}
+          {...register('username')}
         />
       </div>
 
-      {/* Mobile Number */}
+      {/* Mobile */}
       <div className="space-y-2">
         <Label htmlFor="mobile_number">
           Mobile Number <span className="text-destructive">*</span>
@@ -77,21 +79,20 @@ export default function UserForm({
         <Input
           id="mobile_number"
           type="tel"
+          inputMode="numeric"
           placeholder="e.g. 9876543210"
           className="h-12"
           disabled={isEdit}
-          {...register("mobile_number", {
-            required: "Mobile number is required",
+          {...register('mobile_number', {
+            required: 'Mobile number is required',
             pattern: {
               value: /^[0-9]{10}$/,
-              message: "Enter a valid 10-digit mobile number",
+              message: 'Enter a valid 10-digit mobile number',
             },
           })}
         />
         {errors.mobile_number && (
-          <p className="text-xs text-destructive">
-            {errors.mobile_number.message}
-          </p>
+          <p className="text-xs text-destructive">{errors.mobile_number.message}</p>
         )}
       </div>
 
@@ -101,39 +102,36 @@ export default function UserForm({
         <Input
           id="tickets"
           type="number"
+          inputMode="numeric"
           min={0}
           className="h-12"
-          {...register("tickets", { valueAsNumber: true })}
+          {...register('tickets', { valueAsNumber: true, min: 0 })}
         />
       </div>
 
-      {/* is_staff — superuser only */}
-      {isSuperUser() && (
-        <div className="flex items-center justify-between p-4 rounded-xl border border-border">
+      {/* Admin toggle — superuser only */}
+      {isSuperUser && (
+        <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-card">
           <div>
             <p className="text-sm font-medium">Admin Access</p>
-            <p className="text-xs text-muted-foreground">
-              Grant this user admin privileges
-            </p>
+            <p className="text-xs text-muted-foreground">Grant this user admin privileges</p>
           </div>
           <Switch
             checked={isStaff}
-            onCheckedChange={(val) => setValue("is_staff", val)}
+            onCheckedChange={val => setValue('is_staff', val)}
           />
         </div>
       )}
 
-      {/* is_active */}
-      <div className="flex items-center justify-between p-4 rounded-xl border border-border">
+      {/* Active toggle */}
+      <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-card">
         <div>
           <p className="text-sm font-medium">Active</p>
-          <p className="text-xs text-muted-foreground">
-            Inactive users cannot log in
-          </p>
+          <p className="text-xs text-muted-foreground">Inactive users cannot log in</p>
         </div>
         <Switch
           checked={isActive}
-          onCheckedChange={(val) => setValue("is_active", val)}
+          onCheckedChange={val => setValue('is_active', val)}
         />
       </div>
 
@@ -143,19 +141,11 @@ export default function UserForm({
         </Alert>
       )}
 
-      <Button
-        type="submit"
-        className="w-full h-12 text-base"
-        disabled={isPending}
-      >
+      <Button type="submit" className="w-full h-12 text-base" disabled={isPending}>
         {isPending
-          ? isEdit
-            ? "Saving..."
-            : "Creating..."
-          : isEdit
-          ? "Save Changes"
-          : "Create User"}
+          ? isEdit ? 'Saving...' : 'Creating...'
+          : isEdit ? 'Save Changes' : 'Create User'}
       </Button>
     </form>
-  );
+  )
 }

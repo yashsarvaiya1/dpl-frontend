@@ -15,7 +15,7 @@ interface Props { id: number }
 export default function TeamEditPage({ id }: Props) {
   const router = useRouter()
   const { setHeaderTitle, setShowBack } = useUiStore()
-  const { data: team, isLoading } = useTeam(id)
+  const { data: team, isLoading }       = useTeam(id)
   const { mutateAsync, isPending, error } = useUpdateTeam()
 
   useEffect(() => {
@@ -24,18 +24,32 @@ export default function TeamEditPage({ id }: Props) {
     return () => setShowBack(false)
   }, [setHeaderTitle, setShowBack])
 
-  if (isLoading) return <PageWrapper><Skeleton className="h-12 w-full" /></PageWrapper>
+  if (isLoading) return (
+    <PageWrapper>
+      <Skeleton className="h-12 w-full rounded-xl" />
+    </PageWrapper>
+  )
+
+  if (!team) return (
+    <PageWrapper>
+      <p className="text-center text-sm text-destructive py-12">Team not found.</p>
+    </PageWrapper>
+  )
+
+  const apiError    = (error as any)?.response?.data
+  const errorMessage = apiError?.name?.[0] ?? apiError?.detail
+    ?? (error ? 'Failed to update team.' : undefined)
 
   return (
     <PageWrapper>
       <TeamForm
-        defaultValues={{ name: team?.name }}
+        defaultValues={{ name: team.name }}
         onSubmit={async (data) => {
           await mutateAsync({ id, data })
           router.push(`/teams/${id}`)
         }}
         isLoading={isPending}
-        error={error ? 'Failed to update team.' : null}
+        error={errorMessage}
         submitLabel="Update Team"
       />
     </PageWrapper>
