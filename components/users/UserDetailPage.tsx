@@ -45,10 +45,13 @@ export default function UserDetailPage({ id }: Props) {
   const { mutate: clearPassword, isPending: isClearing } = useClearPassword();
   const { mutate: deactivate, isPending: isDeactivating } = useDeactivateUser();
   const { mutate: activate, isPending: isActivating } = useActivateUser();
+  const setShowBack = useUIStore((s) => s.setShowBack);
 
   useEffect(() => {
     setHeaderTitle("User Details");
-  }, [setHeaderTitle]);
+    setShowBack(true);
+    return () => setShowBack(false);
+  }, [setHeaderTitle, setShowBack]);
 
   if (isLoading) {
     return (
@@ -71,10 +74,10 @@ export default function UserDetailPage({ id }: Props) {
   }
 
   // ✅ Permission logic AFTER user data is confirmed loaded
-    const canManageAdmin = isSuperUser();
-    const isSelf = currentUser?.id === user.id;
-    const canManageThisUser = canManageAdmin
-    ? true  // superuser can manage everyone including themselves
+  const canManageAdmin = isSuperUser();
+  const isSelf = currentUser?.id === user.id;
+  const canManageThisUser = canManageAdmin
+    ? true // superuser can manage everyone including themselves
     : !isSelf && !user.is_staff && !user.is_superuser;
 
   return (
@@ -86,10 +89,10 @@ export default function UserDetailPage({ id }: Props) {
             {(user.username || user.mobile_number || "?")[0].toUpperCase()}
           </div>
           <div className="text-center">
-            <h2 className="text-lg font-semibold">
-              {user.username || "—"}
-            </h2>
-            <p className="text-sm text-muted-foreground">{user.mobile_number}</p>
+            <h2 className="text-lg font-semibold">{user.username || "—"}</h2>
+            <p className="text-sm text-muted-foreground">
+              {user.mobile_number}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             {user.is_superuser && <Badge>Superuser</Badge>}
@@ -104,7 +107,7 @@ export default function UserDetailPage({ id }: Props) {
                 "text-xs font-medium px-2 py-0.5 rounded-full",
                 user.is_active
                   ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  : "bg-red-100 text-red-700",
               )}
             >
               {user.is_active ? "Active" : "Inactive"}
@@ -226,7 +229,8 @@ export default function UserDetailPage({ id }: Props) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete User?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will soft delete the user. They won't be able to log in.
+                    This will soft delete the user. They won't be able to log
+                    in.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

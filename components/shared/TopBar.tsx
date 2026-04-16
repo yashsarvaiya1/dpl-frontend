@@ -6,13 +6,10 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { useUIStore } from "@/stores/uiStore";
 
-interface TopBarProps {
-  showBack?: boolean;
-}
-
-export default function TopBar({ showBack = false }: TopBarProps) {
+export default function TopBar() {
   const router = useRouter();
   const headerTitle = useUIStore((s) => s.headerTitle);
+  const showBack = useUIStore((s) => s.showBack);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border h-14 flex items-center px-4 max-w-md mx-auto">

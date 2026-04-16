@@ -38,7 +38,7 @@ export default function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 flex-1 min-h-[48px] rounded-lg transition-colors",
+                "flex flex-col items-center justify-center gap-1 flex-1 min-h-12 rounded-lg transition-colors",
                 isActive
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"

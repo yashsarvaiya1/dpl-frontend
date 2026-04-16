@@ -18,10 +18,13 @@ export default function UserEditPage({ id }: Props) {
   const setHeaderTitle = useUIStore((s) => s.setHeaderTitle);
   const { data: user, isLoading } = useUser(id);
   const { mutate: updateUser, isPending, error } = useUpdateUser();
+  const setShowBack = useUIStore((s) => s.setShowBack);
 
   useEffect(() => {
     setHeaderTitle("Edit User");
-  }, [setHeaderTitle]);
+    setShowBack(true);
+    return () => setShowBack(false);
+  }, [setHeaderTitle, setShowBack]);
 
   if (isLoading) {
     return (
@@ -55,13 +58,11 @@ export default function UserEditPage({ id }: Props) {
           tickets: user.tickets,
         }}
         isPending={isPending}
-        error={
-          error ? "Failed to update user. Please try again." : undefined
-        }
+        error={error ? "Failed to update user. Please try again." : undefined}
         onSubmit={(data) => {
           updateUser(
             { id, payload: data },
-            { onSuccess: () => router.replace(`/users/${id}`) }
+            { onSuccess: () => router.replace(`/users/${id}`) },
           );
         }}
       />

@@ -3,14 +3,13 @@
 import { create } from "zustand";
 
 interface UIState {
-  // Sidebar
-  isSidebarOpen: boolean;
-  toggleSidebar: () => void;
-  setSidebarOpen: (val: boolean) => void;
-
   // Header
   headerTitle: string;
   setHeaderTitle: (title: string) => void;
+
+  // Back button
+  showBack: boolean;
+  setShowBack: (val: boolean) => void;
 
   // Global loading
   isGlobalLoading: boolean;
@@ -23,12 +22,11 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>()((set) => ({
-  isSidebarOpen: true,
-  toggleSidebar: () => set((s) => ({ isSidebarOpen: !s.isSidebarOpen })),
-  setSidebarOpen: (val) => set({ isSidebarOpen: val }),
-
   headerTitle: "Dashboard",
   setHeaderTitle: (title) => set({ headerTitle: title }),
+
+  showBack: false,
+  setShowBack: (val) => set({ showBack: val }),
 
   isGlobalLoading: false,
   setGlobalLoading: (val) => set({ isGlobalLoading: val }),

@@ -13,10 +13,13 @@ export default function UserNewPage() {
   const router = useRouter();
   const setHeaderTitle = useUIStore((s) => s.setHeaderTitle);
   const { mutate: createUser, isPending, error } = useCreateUser();
+  const setShowBack = useUIStore((s) => s.setShowBack);
 
   useEffect(() => {
     setHeaderTitle("New User");
-  }, [setHeaderTitle]);
+    setShowBack(true);
+    return () => setShowBack(false);
+  }, [setHeaderTitle, setShowBack]);
 
   return (
     <PageWrapper>

@@ -7,13 +7,12 @@ import BottomNav from "./BottomNav";
 
 interface AppShellProps {
   children: React.ReactNode;
-  showBack?: boolean;
 }
 
-export default function AppShell({ children, showBack = false }: AppShellProps) {
+export default function AppShell({ children }: AppShellProps) {
   return (
     <>
-      <TopBar showBack={showBack} />
+      <TopBar />
       <main>{children}</main>
       <BottomNav />
     </>
