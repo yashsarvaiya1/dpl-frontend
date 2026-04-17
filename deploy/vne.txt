@@ -1,0 +1,27 @@
+# --- POSTGRES DATABASE ---
+POSTGRES_DB=dpl
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+
+# --- DJANGO BACKEND ---
+DB_NAME=dpl
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+SECRET_KEY=xy23asn30u90iwbv4indvk94hsad
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1,backend,dpt.dpdns.org,d.dpdns.org
+
+# CORS & CSRF
+CORS_ALLOWED_ORIGINS=http://localhost:3031,http://127.0.0.1:3031,https://dt.dpdns.org,http://dns.org
+CSRF_TRUSTED_ORIGINS=http://localhost:3031,http://127.0.0.1:3031,https:/dns.org,http://dns.org
+
+# Superuser Configuration
+SUPERUSER_USERNAME=ONL
+SUPERUSER_PASSWORD=yas
+SUPERUSER_MOBILE=851138
+
+# --- NEXT.JS FRONTEND ---
+NEXT_PUBLIC_API_URL=https://dnot.dpdn
+SERWIST_SUPPRESS_TURBOPACK_WARNING=1

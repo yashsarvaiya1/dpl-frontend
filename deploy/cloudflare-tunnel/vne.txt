@@ -1,0 +1,6 @@
+CLOUDFLARE_TUNNEL_TOKEN=eyJhIjoiYTc0NG
+# api key can be get from the cloudflare one dashboard and then to connectors
+# then go to public host name to add the subdomain and for the domain use the digitalplat free domain
+# connect it to the cloudflare and then create the tunnel and add many subdomain in public hostname 
+# tab. and update the compose for the project with the new endpoint to call, also for backend
+# add the ssl_proxy and use_x_forwarded true for converting from localhost http to https allow.
