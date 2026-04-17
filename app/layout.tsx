@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import Providers from "@/components/shared/Providers"
-import { PublicEnvScript } from "next-runtime-env" // Changed from PublicEnvProvider
+import { PublicEnvScript } from "next-runtime-env"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
@@ -12,15 +12,22 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const APP_NAME = "DPL"
 const APP_DEFAULT_TITLE = "DPL"
 const APP_TITLE_TEMPLATE = "%s - DPL"
-const APP_DESCRIPTION = "DPL Application"
+const APP_DESCRIPTION = "Enjoy Cricket like never Before."
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: { default: APP_DEFAULT_TITLE, template: APP_TITLE_TEMPLATE },
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: APP_DEFAULT_TITLE },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+  },
   formatDetection: { telephone: false },
+  icons: {
+  icon: { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+},
 }
 
 export const viewport: Viewport = {
@@ -41,7 +48,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       )}
     >
       <head>
-        {/* This script is MUST for runtime env to work in the browser */}
         <PublicEnvScript />
       </head>
       <body>
