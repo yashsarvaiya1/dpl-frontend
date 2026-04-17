@@ -1,14 +1,15 @@
-// lib/axios.ts
-
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
+import { env } from 'next-runtime-env'
+
+// Fallback to localhost:8000 if the env var fails to load
+const getBaseUrl = () => env('NEXT_PUBLIC_API_URL') || 'http://localhost:8000';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: getBaseUrl(),
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 })
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 const getStoredAuth = () => {
   if (typeof window === 'undefined') return null
   try {
@@ -26,7 +27,6 @@ const clearAuthAndRedirect = () => {
   window.location.href = '/login'
 }
 
-// ── Request — inject access token ─────────────────────────────────────────────
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const auth = getStoredAuth()
@@ -38,7 +38,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// ── Response — silent token refresh on 401 ────────────────────────────────────
 let isRefreshing = false
 let failedQueue: {
   resolve: (value: unknown) => void
@@ -61,8 +60,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status !== 401 || originalRequest._retry) {
       return Promise.reject(error)
     }
-
-    // Don't retry auth endpoints themselves
+    
     const url = originalRequest.url ?? ''
     if (url.includes('/auth/login') || url.includes('/auth/set-password') || url.includes('/auth/logout')) {
       clearAuthAndRedirect()
@@ -90,16 +88,16 @@ apiClient.interceptors.response.use(
     }
 
     try {
-      // Use raw axios to avoid interceptor loop
+      // Ensure we don't have double slashes if NEXT_PUBLIC_API_URL ends in /
+      const baseUrl = getBaseUrl().replace(/\/$/, '');
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/accounts/auth/refresh/`,
+        `${baseUrl}/accounts/auth/refresh/`,
         { refresh: refreshToken },
         { headers: { 'Content-Type': 'application/json' } }
       )
 
       const { access, refresh } = res.data
 
-      // Patch localStorage directly — Zustand store will pick it up on next read
       const raw = localStorage.getItem('dpl-auth')
       if (raw) {
         const parsed = JSON.parse(raw)
