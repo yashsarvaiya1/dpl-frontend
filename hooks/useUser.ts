@@ -16,21 +16,32 @@ export const useUsers = (params?: Record<string, unknown>) =>
 
 export const useUser = (id: number) => {
   const currentUser = useAuthStore(s => s.user)
-  const setUser = useAuthStore(s => s.setUser)
+  const setUser     = useAuthStore(s => s.setUser)
 
   return useQuery({
     queryKey: [USERS_KEY, id],
     queryFn: async () => {
       const fresh = await userService.getById(id)
-      // If this is the logged-in user, sync tickets + status into store
       if (currentUser?.id === fresh.id) {
-        setUser({ tickets: fresh.tickets, is_active: fresh.is_active })
+        setUser({
+          tickets:      fresh.tickets,
+          is_active:    fresh.is_active,
+          is_staff:     fresh.is_staff,
+          is_superuser: fresh.is_superuser,
+        })
       }
       return fresh
     },
     enabled: !!id,
-    refetchOnMount: true,        // always fetch fresh on page mount
-    staleTime: 10 * 1000,        // consider stale after 10s
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    retry: (failureCount, error: any) => {
+      // Never retry on 401/403 — prevents infinite loops
+      const s = error?.response?.status
+      if (s === 401 || s === 403) return false
+      return failureCount < 2
+    },
   })
 }
 
